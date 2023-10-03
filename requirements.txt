@@ -6,7 +6,6 @@ matplotlib
 seaborn
 plotly
 yfinance
-csv
 datetime
 
 
