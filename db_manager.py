@@ -138,10 +138,11 @@ def save_csv_to_database(db, data):
 def fetch_symbols_from_database(db):
     return [row[0] for row in db.fetch("SELECT Symbol FROM Stocks")]
 
-def fetch_and_save_stock_data(db, symbol, period):
-    print(f"Fetching data for {symbol}...")
+
+def fetch_and_save_stock_data(db, symbol, start_date, end_date):
+    print(f"Fetching data for {symbol} from {start_date} to {end_date}...")
     
-    stock_data = yf.download(symbol, period=period)
+    stock_data = yf.download(symbol, start=start_date, end=end_date)
     
     for index, row in stock_data.iterrows():
         date = index.date()

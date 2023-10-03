@@ -16,13 +16,13 @@ def save_nasdaq_to_database():
 
     print("Database connection closed")
 
-def get_yahoo_to_database():
-    db=dbm.Database()
+
+def get_yahoo_to_database(start_date, end_date):
+    db = dbm.Database()
     symbols = dbm.fetch_symbols_from_database(db)
     for symbol in symbols:
         print(symbol)
-        dbm.fetch_and_save_stock_data(db, symbol, period="3Y")
-
+        dbm.fetch_and_save_stock_data(db, symbol, start_date, end_date)
 
     db.close()
 
@@ -30,6 +30,8 @@ def get_yahoo_to_database():
 
 if __name__ == '__main__':
     
-    get_yahoo_to_database()
+    get_yahoo_to_database('2020-01-01', '2020-12-31')
+
     # save_nasdaq_to_database()
+
 
