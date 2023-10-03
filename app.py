@@ -1,7 +1,7 @@
 import streamlit as st
 import db_manager as dbm
 import plotly.graph_objects as go
-
+import datetime
   
 def streamlit_settings():
     # Custom CSS to narrow the top margin
@@ -98,6 +98,21 @@ if __name__ == '__main__':
     # Streamlit selectbox
     selected = st.sidebar.selectbox("Select a Stock:", options)
     selected_symbol = selected.split(" ")[0]  # extracting the selected symbol
+
+    st.write(f"### Add New Stock to DB: {selected_symbol}")
+     # Date input for start and end dates
+    today = datetime.date.today()
+    start_date = st.sidebar.date_input("Start date", today - datetime.timedelta(days=365 *3))
+    end_date = st.sidebar.date_input("End date", today)
+    st.sidebar.write(f"Fetching data from {start_date} to {end_date}")
+
+
+    if st.button("Fetch Data"):
+        # Note: Add your database connection logic and pass the database object to the function
+        # db = YourDatabaseConnectionFunction()
+        dbm.fetch_and_save_stock_data(db, selected_symbol, start_date, end_date)
+        st.write("Data fetched and saved!")
+
 
     # Display the selected stock name
     st.subheader(f"{symbol_to_name[selected_symbol]}")

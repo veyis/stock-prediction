@@ -30,7 +30,7 @@ def get_yahoo_to_database(start_date, end_date):
 
 if __name__ == '__main__':
     
-    get_yahoo_to_database('2020-01-01', '2020-12-31')
+    get_yahoo_to_database('2019-01-01', '2020-01-05')
 
     # save_nasdaq_to_database()
 
