@@ -6,8 +6,7 @@ import yfinance as yf
 import csv
 import pandas as pd
 
-import decouple
-config = decouple.config
+from decouple import config
 
 
 class Database:
@@ -173,7 +172,7 @@ if __name__ == '__main__':
 
     db = Database()
     print("Connected to database")
-    
+
     # # Stocks table creation
     # stocks_table_query = """
     # CREATE TABLE IF NOT EXISTS Stocks (
