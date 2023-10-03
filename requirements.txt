@@ -8,5 +8,6 @@ plotly
 yfinance
 datetime
 python-decouple
+db_manager
 
 
