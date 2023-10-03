@@ -1,8 +1,8 @@
 Symbol,Name,Last Sale,Net Change,% Change, Market Cap ,Country,IPO Year,Volume,Sector,Industry
 AAPL,Apple Inc. Common Stock,$174.39 ,-1.355,-0.77%," 2,726,375,547,320.00 ",United States,1980,55982046,Technology,Computer Manufacturing
 MSFT,Microsoft Corporation Common Stock,$330.46 ,-8.24,-2.43%," 2,455,239,719,572.00 ",United States,1986,20286757,Technology,Computer Software: Prepackaged Software
-GOOG,Alphabet Inc. Class C Capital Stock,$137.93 ,-1.06,-0.76%," 1,739,159,370,000.00 ",United States,2004,20844468,Technology,Computer Software: Programming Data Processing
 GOOGL,Alphabet Inc. Class A Common Stock,$137.07 ,-1.03,-0.75%," 1,728,315,630,000.00 ",United States,2004,21297526,Technology,Computer Software: Programming Data Processing
 AMZN,Amazon.com Inc. Common Stock,$140.54 ,-4.18,-2.89%," 1,450,056,696,870.00 ",United States,1997,53413415,Consumer Discretionary,Catalog/Specialty Distribution
 NVDA,NVIDIA Corporation Common Stock,$439.37 ,-16.44,-3.61%," 1,085,243,900,000.00 ",United States,1999,34534524,Technology,Semiconductors
 TSLA,Tesla Inc. Common Stock,$272.77 ,-3.27,-1.19%," 865,770,470,764.00 ",United States,2010,101662898,Consumer Discretionary,Auto Manufacturing
+TUPRS.IS,Turkiye Petrol Rafinerileri A.S.,$272.77 ,0,0%," 0 ",Turkiye, 1983,0,Rafineri,Oil Industry 

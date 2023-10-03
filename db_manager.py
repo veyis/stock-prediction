@@ -167,6 +167,14 @@ def get_stock_data_as_dataframe(db, symbol):
     df = pd.DataFrame(stock_data, columns=columns)
     return df
 
+def fetch_stock_symbols_and_names(db):
+    """
+    Fetch all stock symbols and names from the Stocks table.
+    """
+    records = db.fetch("SELECT Symbol, Name FROM Stocks")
+    return records
+
+
 
 if __name__ == '__main__':
 
