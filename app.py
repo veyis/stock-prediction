@@ -98,12 +98,12 @@ if __name__ == '__main__':
     selected_symbol = selected.split(" ")[0]  # extracting the selected symbol
 
     # Display the selected stock name
-    st.write(f"Stock Name: {symbol_to_name[selected_symbol]}")
+    st.subheader(f"{symbol_to_name[selected_symbol]}")
 
         # Fetch stock data for the selected symbol and convert it to a DataFrame
     df = dbm.get_stock_data_as_dataframe(db, selected_symbol)
 
-    tb1, tb2, tb3,tb4,tb5, tb6 = st.tabs(["Info","Data","Logistic Regression", "Random Forest & XGBoost", "Long Short-Term Memory (LSTM)", "Prophet"  ])
+    tb1, tb2, tb3,tb4,tb5, tb6 = st.tabs(["Graph","Data","Logistic Regression", "Random Forest & XGBoost", "Long Short-Term Memory (LSTM)", "Prophet"  ])
 
     
     with tb1:
@@ -111,7 +111,14 @@ if __name__ == '__main__':
         # fig = plot_stock_prices(selected_symbol)
         # st.plotly_chart(fig)
         trade_view_graph(selected_symbol)
-                
+
+        
+
+
+
+    with tb2:
+        #Display the dataframe in Streamlit
+        st.write(df)
         # Fetch stock details for the selected symbol
         selected_stock_details = dbm.fetch_stock_details_by_symbol(db, selected_symbol)
 
@@ -125,12 +132,6 @@ if __name__ == '__main__':
             st.warning("No details found for the selected stock!")
 
 
-
-
-
-    with tb2:
-        #Display the dataframe in Streamlit
-        st.write(df)
     
     with tb3:
         st.write("Logistic Regression")
@@ -146,10 +147,7 @@ if __name__ == '__main__':
     
 
 
-
-
     
     #Close the database connection
     db.close()
-
-    st.write("Database connection closed")
+    #st.write("Database connection closed")
