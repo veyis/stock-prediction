@@ -21,7 +21,7 @@ def get_yahoo_to_database():
     symbols = dbm.fetch_symbols_from_database(db)
     for symbol in symbols:
         print(symbol)
-        dbm.fetch_and_save_stock_data(db, symbol, period="1Y")
+        dbm.fetch_and_save_stock_data(db, symbol, period="2Y")
 
 
     db.close()

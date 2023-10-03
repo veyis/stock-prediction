@@ -174,6 +174,13 @@ def fetch_stock_symbols_and_names(db):
     records = db.fetch("SELECT Symbol, Name FROM Stocks")
     return records
 
+def fetch_stock_details_by_symbol(db, symbol):
+    """
+    Fetch all details for a stock given its symbol from the Stocks table.
+    """
+    record = db.fetch(f"SELECT * FROM Stocks WHERE Symbol='{symbol}'")
+    return record[0] if record else None
+
 
 
 if __name__ == '__main__':
