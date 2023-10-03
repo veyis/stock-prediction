@@ -45,6 +45,8 @@ def plot_stock_prices(symbol):
     return fig
 
 def trade_view_graph(symbol):
+    symbol = symbol.split('.')[0]
+     
     html_code = f'''
     <div id="tradingview_34f5a" class="tradingview-widget-container">
         <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
