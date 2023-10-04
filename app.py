@@ -83,6 +83,26 @@ def trade_view_graph(symbol):
     '''
     st.markdown(html_code, unsafe_allow_html=True)
 
+def get_df(symbol):
+    
+    # Initialize a Yahoo Finance Ticker object
+    ticker = yf.Ticker(symbol)
+    # Fetch historical stock data for the past 5 years
+    data = ticker.history(period="5y")
+    # Create a DataFrame with the time series data
+    df = pd.DataFrame(data)
+    df = df.drop(columns=['Dividends', 'Stock Splits'])
+    print(df.head())
+    # Convert the index to a column
+    df.reset_index(inplace=True)
+    # Convert the Date column to datetime
+    df['Date'] = pd.to_datetime(df['Date'])
+    df.set_index('Date', inplace=True)
+    # Sort the DataFrame by the index
+    df.sort_index(inplace=True)
+    #st.write(df)
+    return df
+
 
 # Execute the main function
 if __name__ == '__main__':
@@ -147,10 +167,11 @@ if __name__ == '__main__':
     
     with tb1:
         
-        # fig = plot_stock_prices(selected_symbol)
-        # st.plotly_chart(fig)
-        trade_view_graph(selected_symbol)
-
+        fig = plot_stock_prices(selected_symbol)
+        st.plotly_chart(fig)
+        st.write(selected_symbol)
+        #trade_view_graph(selected_symbol)
+        df=get_df(selected_symbol)
         
 
 
@@ -173,24 +194,7 @@ if __name__ == '__main__':
 
     
     with tb3:
-        #st.write("Logistic Regression")
-        # Initialize a Yahoo Finance Ticker object
-        ticker = yf.Ticker(selected_symbol)
-        # Fetch historical stock data for the past 5 years
-        data = ticker.history(period="5y")
-        # Create a DataFrame with the time series data
-        df = pd.DataFrame(data)
-        df = df.drop(columns=['Dividends', 'Stock Splits'])
-        print(df.head())
-        # Convert the index to a column
-        df.reset_index(inplace=True)
-        # Convert the Date column to datetime
-        df['Date'] = pd.to_datetime(df['Date'])
-        df.set_index('Date', inplace=True)
-        # Sort the DataFrame by the index
-        df.sort_index(inplace=True)
-        #st.write(df)
-
+        df= get_df(selected_symbol)
         # Feature Engineering
         df['Trend'] =(df['Close'].diff() > 0).astype(int)
         
