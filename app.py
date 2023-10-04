@@ -4,6 +4,9 @@ import plotly.graph_objects as go
 import datetime
 import yfinance as yf
 import pandas as pd
+import numpy as np
+
+
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
@@ -110,8 +113,8 @@ if __name__ == '__main__':
     st.sidebar.write("---")
  
 
-    st.sidebar.write(f"## Add New Stock")
-    st.sidebar.text_input("Symbol", value="", max_chars=None, key=None, type='default')
+    # st.sidebar.write(f"## Add New Stock")
+    # st.sidebar.text_input("Symbol", value="", max_chars=None, key=None, type='default')
 
     # Date input for start and end dates
     today = datetime.date.today()
@@ -124,13 +127,13 @@ if __name__ == '__main__':
     #st.sidebar.write(f"Fetching data from {start_date} to {end_date}")
 
 
-    if st.sidebar.button("Add Stock to Database"):
-        # Note: Add your database connection logic and pass the database object to the function
-        # db = YourDatabaseConnectionFunction()
-        dbm.fetch_and_save_stock_data(db, selected_symbol, start_date, end_date)
-        st.write("Data fetched and saved!")
+    # if st.sidebar.button("Add Stock to Database"):
+    #     # Note: Add your database connection logic and pass the database object to the function
+    #     # db = YourDatabaseConnectionFunction()
+    #     dbm.fetch_and_save_stock_data(db, selected_symbol, start_date, end_date)
+    #     st.write("Data fetched and saved!")
 
-    st.sidebar.write("---")
+    # st.sidebar.write("---")
     
 
     # Display the selected stock name
@@ -170,7 +173,7 @@ if __name__ == '__main__':
 
     
     with tb3:
-        st.write("Logistic Regression")
+        #st.write("Logistic Regression")
         # Initialize a Yahoo Finance Ticker object
         ticker = yf.Ticker(selected_symbol)
         # Fetch historical stock data for the past 5 years
@@ -186,7 +189,7 @@ if __name__ == '__main__':
         df.set_index('Date', inplace=True)
         # Sort the DataFrame by the index
         df.sort_index(inplace=True)
-        st.write(df)
+        #st.write(df)
 
         # Feature Engineering
         df['Trend'] =(df['Close'].diff() > 0).astype(int)
@@ -216,8 +219,8 @@ if __name__ == '__main__':
         y_pred  =model.predict(X_test_scaled)
 
     
-        st.title('Model Evaluation')
-
+        st.subheader('Model Evaluation')
+        st.write("---")
         # Displaying Accuracy with a bar chart
         st.write('## Accuracy')
         accuracy = accuracy_score(y_test, y_pred)
@@ -230,14 +233,13 @@ if __name__ == '__main__':
         st.text(classification_report(y_test, y_pred))
 
     
-
         import plotly.figure_factory as ff
 
-        # Confusion Matrix using DataFrame for better presentation
-        st.write('## Confusion Matrix')
-        cm = confusion_matrix(y_test, y_pred)
-        cm_df = pd.DataFrame(cm, index=['Actual Negative', 'Actual Positive'], columns=['Predicted Negative', 'Predicted Positive'])
-        st.write(cm_df)
+        # # Confusion Matrix using DataFrame for better presentation
+        # st.write('## Confusion Matrix')
+        # cm = confusion_matrix(y_test, y_pred)
+        # cm_df = pd.DataFrame(cm, index=['Actual Negative', 'Actual Positive'], columns=['Predicted Negative', 'Predicted Positive'])
+        # st.write(cm_df)
 
         # Confusion Matrix using DataFrame for better presentation
         st.write('## Confusion Matrix')
@@ -249,31 +251,8 @@ if __name__ == '__main__':
 
         st.plotly_chart(fig)
         
+        st.write(df)
 
-        # Predict the trend for the next 30 days
-        # Get the last 30 days of data
-        # last_30_days = df[-30:]
-        # # Scale the features
-        # last_30_days_scaled = scaler.fit_transform(last_30_days[features])
-        # # Make predictions
-        # predictions = model.predict(last_30_days_scaled)
-        # # Display the predictions
-        # st.write(predictions)
-        # # Display the predictions as a bar chart
-        # st.bar_chart(predictions)
-        # # Display the predictions as a line chart
-        # st.line_chart(predictions)
-        # # Display the predictions as a table
-        # st.table(predictions)
-        # # Display the predictions as a dataframe
-        # st.write(pd.DataFrame(predictions, columns=['Trend']))
-        # # Display the predictions as a dataframe with the date index
-        # st.write(pd.DataFrame(predictions, columns=['Trend'], index=last_30_days.index))
-        # # Display the predictions as a dataframe with the date index and the actual closing price
-        # st.write(pd.DataFrame({'Trend': predictions, 'Close': last_30_days['Close']}, index=last_30_days.index))
-        # # Display the predictions as a dataframe with the date index and the actual closing price
-        # st.write(pd.DataFrame({'Trend': predictions, 'Close': last_30_days['Close']}, index=last_30_days.index).plot())
-   
 
     with tb4:
         st.write("Random Forest & XGBoost")
