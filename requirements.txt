@@ -8,5 +8,7 @@ plotly
 yfinance
 datetime
 python-decouple
+scikit-learn
+
 
 

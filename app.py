@@ -2,7 +2,14 @@ import streamlit as st
 import db_manager as dbm
 import plotly.graph_objects as go
 import datetime
-  
+import yfinance as yf
+import pandas as pd
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
 def streamlit_settings():
     # Custom CSS to narrow the top margin
     st.markdown("""
@@ -71,7 +78,7 @@ def trade_view_graph(symbol):
         </script>
     </div>
     '''
-    st.components.v1.html(html_code, width=1000, height=630)
+    st.markdown(html_code, unsafe_allow_html=True)
 
 
 # Execute the main function
@@ -79,7 +86,7 @@ if __name__ == '__main__':
 
     page_icon="🚀"  
     st.set_page_config(page_title="Predict Stock Prices", layout="wide", page_icon=page_icon)
-    st.sidebar.title('Predict Stock Prices')
+    #st.sidebar.title('Predict Stock Prices')
     streamlit_settings()
 
     # Create a database connection
@@ -96,23 +103,35 @@ if __name__ == '__main__':
     options = [f"{symbol} - {name}" for symbol, name in symbol_to_name.items()]
 
     # Streamlit selectbox
+    st.sidebar.write("---")
     selected = st.sidebar.selectbox("Select a Stock:", options)
     selected_symbol = selected.split(" ")[0]  # extracting the selected symbol
 
-    st.write(f"### Add New Stock to DB: {selected_symbol}")
-     # Date input for start and end dates
+    st.sidebar.write("---")
+ 
+
+    st.sidebar.write(f"## Add New Stock")
+    st.sidebar.text_input("Symbol", value="", max_chars=None, key=None, type='default')
+
+    # Date input for start and end dates
     today = datetime.date.today()
-    start_date = st.sidebar.date_input("Start date", today - datetime.timedelta(days=365 *3))
-    end_date = st.sidebar.date_input("End date", today)
-    st.sidebar.write(f"Fetching data from {start_date} to {end_date}")
+    # start_date = st.sidebar.date_input("Start date", today - datetime.timedelta(days=365 *3))
+    # end_date = st.sidebar.date_input("End date", today)
+
+    start_date = (today - datetime.timedelta(days=365 *3))
+    end_date = today
+
+    #st.sidebar.write(f"Fetching data from {start_date} to {end_date}")
 
 
-    if st.button("Fetch Data"):
+    if st.sidebar.button("Add Stock to Database"):
         # Note: Add your database connection logic and pass the database object to the function
         # db = YourDatabaseConnectionFunction()
         dbm.fetch_and_save_stock_data(db, selected_symbol, start_date, end_date)
         st.write("Data fetched and saved!")
 
+    st.sidebar.write("---")
+    
 
     # Display the selected stock name
     st.subheader(f"{symbol_to_name[selected_symbol]}")
@@ -152,6 +171,109 @@ if __name__ == '__main__':
     
     with tb3:
         st.write("Logistic Regression")
+        # Initialize a Yahoo Finance Ticker object
+        ticker = yf.Ticker(selected_symbol)
+        # Fetch historical stock data for the past 5 years
+        data = ticker.history(period="5y")
+        # Create a DataFrame with the time series data
+        df = pd.DataFrame(data)
+        df = df.drop(columns=['Dividends', 'Stock Splits'])
+        print(df.head())
+        # Convert the index to a column
+        df.reset_index(inplace=True)
+        # Convert the Date column to datetime
+        df['Date'] = pd.to_datetime(df['Date'])
+        df.set_index('Date', inplace=True)
+        # Sort the DataFrame by the index
+        df.sort_index(inplace=True)
+        st.write(df)
+
+        # Feature Engineering
+        df['Trend'] =(df['Close'].diff() > 0).astype(int)
+        
+        # Drop NaN values created due to differencing
+        df.dropna(inplace=True)
+
+        features = df.drop(columns=['Trend', 'Close']).columns.tolist()
+        target = 'Trend'
+
+        train_df, test_df = train_test_split(df, test_size=0.2, shuffle=False)
+        X_train, y_train = train_df[features], train_df[target]
+        X_test, y_test = test_df[features], test_df[target]
+
+        # Scale the features
+        scaler = StandardScaler()
+        X_train_scaled = scaler.fit_transform(X_train)
+        X_test_scaled = scaler.fit_transform(X_test)
+
+        # Train a Logistic Regression model
+        from numpy.random.mtrand import logistic
+        #Build and Train Model
+        model = LogisticRegression()
+        model.fit(X_train_scaled, y_train)
+
+        # Make predictions on the test set
+        y_pred  =model.predict(X_test_scaled)
+
+    
+        st.title('Model Evaluation')
+
+        # Displaying Accuracy with a bar chart
+        st.write('## Accuracy')
+        accuracy = accuracy_score(y_test, y_pred)
+        accuracy_chart = pd.DataFrame({'Accuracy': [accuracy]}, index=['Model'])
+        st.write(accuracy_chart)
+        #st.bar_chart(accuracy_chart)
+
+        # Classification Report
+        st.write('## Classification Report')
+        st.text(classification_report(y_test, y_pred))
+
+    
+
+        import plotly.figure_factory as ff
+
+        # Confusion Matrix using DataFrame for better presentation
+        st.write('## Confusion Matrix')
+        cm = confusion_matrix(y_test, y_pred)
+        cm_df = pd.DataFrame(cm, index=['Actual Negative', 'Actual Positive'], columns=['Predicted Negative', 'Predicted Positive'])
+        st.write(cm_df)
+
+        # Confusion Matrix using DataFrame for better presentation
+        st.write('## Confusion Matrix')
+        cm = confusion_matrix(y_test, y_pred)
+        cm_df = pd.DataFrame(cm, index=['Actual Negative', 'Actual Positive'], columns=['Predicted Negative', 'Predicted Positive'])
+
+        # Using plotly to display heatmap
+        fig = ff.create_annotated_heatmap(z=cm_df.values, x=list(cm_df.columns), y=list(cm_df.index), colorscale='Blues', showscale=True)
+
+        st.plotly_chart(fig)
+        
+
+        # Predict the trend for the next 30 days
+        # Get the last 30 days of data
+        # last_30_days = df[-30:]
+        # # Scale the features
+        # last_30_days_scaled = scaler.fit_transform(last_30_days[features])
+        # # Make predictions
+        # predictions = model.predict(last_30_days_scaled)
+        # # Display the predictions
+        # st.write(predictions)
+        # # Display the predictions as a bar chart
+        # st.bar_chart(predictions)
+        # # Display the predictions as a line chart
+        # st.line_chart(predictions)
+        # # Display the predictions as a table
+        # st.table(predictions)
+        # # Display the predictions as a dataframe
+        # st.write(pd.DataFrame(predictions, columns=['Trend']))
+        # # Display the predictions as a dataframe with the date index
+        # st.write(pd.DataFrame(predictions, columns=['Trend'], index=last_30_days.index))
+        # # Display the predictions as a dataframe with the date index and the actual closing price
+        # st.write(pd.DataFrame({'Trend': predictions, 'Close': last_30_days['Close']}, index=last_30_days.index))
+        # # Display the predictions as a dataframe with the date index and the actual closing price
+        # st.write(pd.DataFrame({'Trend': predictions, 'Close': last_30_days['Close']}, index=last_30_days.index).plot())
+   
 
     with tb4:
         st.write("Random Forest & XGBoost")
