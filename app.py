@@ -60,7 +60,12 @@ if __name__ == '__main__':
     selected_symbol = selected.split(" ")[0]  # extracting the selected symbol
 
     st.sidebar.write("---")
- 
+
+    # List of periods
+    periods = ["1mo", "3mo", "6mo", "YTD", "1y", "2y", "5y", "10y",  "MAX"]
+
+    # Display the selectbox in the Streamlit app
+    period = st.sidebar.selectbox('Choose a time period:', periods, index=3)
 
     # st.sidebar.write(f"## Add New Stock")
     # st.sidebar.text_input("Symbol", value="", max_chars=None, key=None, type='default')
@@ -88,23 +93,17 @@ if __name__ == '__main__':
     # Display the selected stock name
     st.subheader(f"{symbol_to_name[selected_symbol]}")
 
-        # Fetch stock data for the selected symbol and convert it to a DataFrame
-    df = dbm.get_stock_data_as_dataframe(db, selected_symbol)
+     
+    #df = dbm.get_stock_data_as_dataframe(db, selected_symbol)
+    df, _ = lwg.fetch_data(selected_symbol, period)  # if it's returning (data, metadata) or similar
 
     tb1, tb2, tb3,tb4,tb5, tb6 = st.tabs(["Graph","Data","Logistic Regression", "Random Forest & XGBoost", "Long Short-Term Memory (LSTM)", "Prophet"  ])
 
     
     with tb1:
         
-        #df=lwg.fetch_data(selected_symbol, period="1y")
-        df, _ = lwg.fetch_data(selected_symbol, period="1y")  # if it's returning (data, metadata) or similar
-
-
-        lwg.display_multipane_chart(df,selected_symbol, period="1y")
+        lwg.display_multipane_chart(df,selected_symbol, period)
         # Create a candlestick chart
-
-
-
 
     with tb2:
         #Display the dataframe in Streamlit
