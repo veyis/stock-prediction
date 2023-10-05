@@ -62,10 +62,10 @@ if __name__ == '__main__':
     st.sidebar.write("---")
 
     # List of periods
-    periods = ["1mo", "3mo", "6mo", "YTD", "1y", "2y", "5y", "10y",  "MAX"]
+    periods = ["3mo", "6mo", "YTD", "1y", "2y", "5y", "10y",  "MAX"]
 
     # Display the selectbox in the Streamlit app
-    period = st.sidebar.selectbox('Choose a time period:', periods, index=3)
+    period = st.sidebar.selectbox('Choose a time period:', periods, index=4)
 
     # st.sidebar.write(f"## Add New Stock")
     # st.sidebar.text_input("Symbol", value="", max_chars=None, key=None, type='default')
@@ -109,19 +109,20 @@ if __name__ == '__main__':
         #Display the dataframe in Streamlit
         st.write(df)
         # Fetch stock details for the selected symbol
-        selected_stock_details = dbm.fetch_stock_details_by_symbol(db, selected_symbol)
+        #selected_stock_details = dbm.fetch_stock_details_by_symbol(db, selected_symbol)
 
         # Display stock details
-        if selected_stock_details:
-            st.write("### Stock Details:")
-            columns = ['Symbol', 'Name', 'MarketCap', 'Country', 'IPOYear', 'Sector', 'Industry']
-            for col, value in zip(columns, selected_stock_details):
-                st.write(f"**{col}:** {value}")
-        else:
-            st.warning("No details found for the selected stock!")
+        st.subheader(f"{selected_symbol} Details")
+
+        selected_stock_details = yf.Ticker(selected_symbol).info
+
+        # Convert the dictionary to a DataFrame for better display in Streamlit
+        df_info = pd.DataFrame(list(selected_stock_details.items()), columns=['Title', 'Value'])
+
+        # Display the details in a table format
+        st.table(df_info)
 
 
-    
     with tb3:
         
         # Feature Engineering
