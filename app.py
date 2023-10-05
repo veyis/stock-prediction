@@ -5,7 +5,7 @@ import datetime
 import yfinance as yf
 import pandas as pd
 import numpy as np
-
+import lightWeightGraph as lwg
 
 
 from sklearn.model_selection import train_test_split
@@ -31,77 +31,6 @@ def streamlit_settings():
         </style>
         """
     st.markdown(hide_menu_style, unsafe_allow_html=True)
-
-def plot_stock_prices(symbol):
-    # Using your db_manager to get data as a DataFrame
-    db = dbm.Database()
-    df = dbm.get_stock_data_as_dataframe(db, symbol)
-    db.close()
-    
-    # Create a Plotly figure
-    fig = go.Figure()
-
-    # Add trace for stock prices
-    fig.add_trace(go.Candlestick(x=df['Date'],
-                open=df['OpeningPrice'],
-                high=df['High'],
-                low=df['Low'],
-                close=df['ClosingPrice'],
-                name=symbol))
-
-    # Set the title
-    fig.update_layout(title=f"Stock prices for {symbol}")
-
-    return fig
-
-def trade_view_graph(symbol):
-    symbol = symbol.split('.')[0]
-     
-    html_code = f'''
-    <div id="tradingview_34f5a" class="tradingview-widget-container">
-        <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-        <script type="text/javascript">
-            var userLang = navigator.language || navigator.userLanguage;
-            var tradingViewLocale = userLang.substring(0, 2);
-            
-            new TradingView.widget({{
-                "width": 980,
-                "height": 610,
-                "symbol": "{symbol}",
-                "interval": "D",
-                "timezone": "Etc/UTC",
-                "theme": "dark",
-                "style": "1",
-                "locale": tradingViewLocale,
-                "toolbar_bg": "#f1f3f6",
-                "enable_publishing": false,
-                "allow_symbol_change": true,
-                "container_id": "tradingview_34f5a"
-            }});
-        </script>
-    </div>
-    '''
-    st.markdown(html_code, unsafe_allow_html=True)
-
-def get_df(symbol):
-    
-    # Initialize a Yahoo Finance Ticker object
-    ticker = yf.Ticker(symbol)
-    # Fetch historical stock data for the past 5 years
-    data = ticker.history(period="5y")
-    # Create a DataFrame with the time series data
-    df = pd.DataFrame(data)
-    df = df.drop(columns=['Dividends', 'Stock Splits'])
-    print(df.head())
-    # Convert the index to a column
-    df.reset_index(inplace=True)
-    # Convert the Date column to datetime
-    df['Date'] = pd.to_datetime(df['Date'])
-    df.set_index('Date', inplace=True)
-    # Sort the DataFrame by the index
-    df.sort_index(inplace=True)
-    #st.write(df)
-    return df
 
 
 # Execute the main function
@@ -167,12 +96,13 @@ if __name__ == '__main__':
     
     with tb1:
         
-        fig = plot_stock_prices(selected_symbol)
-        st.plotly_chart(fig)
-        st.write(selected_symbol)
-        #trade_view_graph(selected_symbol)
-        df=get_df(selected_symbol)
-        
+        #df=lwg.fetch_data(selected_symbol, period="1y")
+        df, _ = lwg.fetch_data(selected_symbol, period="1y")  # if it's returning (data, metadata) or similar
+
+
+        lwg.display_multipane_chart(df,selected_symbol, period="1y")
+        # Create a candlestick chart
+
 
 
 
@@ -194,7 +124,7 @@ if __name__ == '__main__':
 
     
     with tb3:
-        df= get_df(selected_symbol)
+        
         # Feature Engineering
         df['Trend'] =(df['Close'].diff() > 0).astype(int)
         

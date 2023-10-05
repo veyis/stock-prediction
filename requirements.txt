@@ -9,6 +9,10 @@ yfinance
 datetime
 python-decouple
 scikit-learn
+pandas_ta
+streamlit_lightweight_charts
+
+
 
 
 
