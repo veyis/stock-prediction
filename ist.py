@@ -20,8 +20,6 @@ for stock in symbols:
         print(stock_details['symbol'], stock_details['longName'], stock_details['marketCap'],
               stock_details.get('country', 'N/A'), stock_details.get('ipoYear', 'N/A'),
               stock_details.get('sector', 'N/A'), stock_details.get('industry', 'N/A')) 
-        
-            
 
         # wrtie to csv
         with open('ist2.csv', 'a') as f:

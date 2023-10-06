@@ -101,7 +101,7 @@ if __name__ == '__main__':
 
     
     with tb1:
-        
+        print(selected_symbol, period)
         lwg.display_multipane_chart(df,selected_symbol, period)
         # Create a candlestick chart
 
@@ -117,7 +117,9 @@ if __name__ == '__main__':
         selected_stock_details = yf.Ticker(selected_symbol).info
 
         # Convert the dictionary to a DataFrame for better display in Streamlit
-        df_info = pd.DataFrame(list(selected_stock_details.items()), columns=['Title', 'Value'])
+        df_info = pd.DataFrame(list(selected_stock_details.items()))
+
+        
 
         # Display the details in a table format
         st.table(df_info)

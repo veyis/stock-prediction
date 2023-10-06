@@ -127,18 +127,27 @@ def save_csv_to_database(db, data):
             name = row[1]
             
             # Check if the value exists and is a string before processing
-            market_cap = float(row[5].replace(',', '').replace('"', '').replace(' ', '')) if row[5] and isinstance(row[5], str) else None
+            market_cap = None
         
-            country = row[6]
-            ipo_year = int(row[7]) if row[7] else None
-            sector = row[9]
-            industry = row[10]
+            country =  None
+            ipo_year =  None
+            sector =  None
+            industry =  None
             
             # Insert into Stocks table
             db.insert('Stocks', ['Symbol', 'Name', 'MarketCap', 'Country', 'IPOYear', 'Sector', 'Industry'],
                       [symbol, name, market_cap, country, ipo_year, sector, industry])
             print(f"Added data for {symbol}")
-            
+
+            # condition = f"Symbol = '{symbol}'"
+            # db.update('Stocks', 
+            # columns=['Name', 'MarketCap', 'Country', 'IPOYear', 'Sector', 'Industry'],
+            # values=[name, market_cap, country, ipo_year, sector, industry],
+            # condition=condition)
+            # print(f"Updated data for {symbol}")
+
+
+
         except Exception as e:
             print(f"Error processing row: {row}. Error: {e}")
 
