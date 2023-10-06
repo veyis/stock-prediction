@@ -122,6 +122,13 @@ if __name__ == '__main__':
         # Display the details in a table format
         st.table(df_info)
 
+        # Display the company summary
+        st.subheader(f"{selected_symbol} Summary")
+        st.write(selected_stock_details['longBusinessSummary'])
+
+        # Display the company website
+        st.subheader(f"{selected_symbol} Website")
+        st.write(selected_stock_details['website'])
 
     with tb3:
         

@@ -122,17 +122,26 @@ def read_csv_from_file(file_path):
 # Save parsed data to database
 def save_csv_to_database(db, data):
     for row in data:
-        symbol = row[0]
-        name = row[1]
-        market_cap = float(row[5].replace(',', '').replace('"', '').replace(' ', ''))
-        country = row[6]
-        ipo_year = int(row[7]) if row[7] else None
-        sector = row[9]
-        industry = row[10]
+        try:
+            symbol = row[0]
+            name = row[1]
+            
+            # Check if the value exists and is a string before processing
+            market_cap = float(row[5].replace(',', '').replace('"', '').replace(' ', '')) if row[5] and isinstance(row[5], str) else None
+        
+            country = row[6]
+            ipo_year = int(row[7]) if row[7] else None
+            sector = row[9]
+            industry = row[10]
+            
+            # Insert into Stocks table
+            db.insert('Stocks', ['Symbol', 'Name', 'MarketCap', 'Country', 'IPOYear', 'Sector', 'Industry'],
+                      [symbol, name, market_cap, country, ipo_year, sector, industry])
+            print(f"Added data for {symbol}")
+            
+        except Exception as e:
+            print(f"Error processing row: {row}. Error: {e}")
 
-        # Insert into Stocks table
-        db.insert('Stocks', ['Symbol', 'Name', 'MarketCap', 'Country', 'IPOYear', 'Sector', 'Industry'],
-                  [symbol, name, market_cap, country, ipo_year, sector, industry])
 
 
 def fetch_symbols_from_database(db):
@@ -244,8 +253,8 @@ if __name__ == '__main__':
     #     db.insert('StockPrices', ['Symbol', 'Date', 'OpeningPrice', 'ClosingPrice', 'High', 'Low', 'Volume'], record)
 
 
-    # parsed_data = read_csv_from_file('nasdaq2.csv')
-    # save_csv_to_database(db, parsed_data)
+    parsed_data = read_csv_from_file('nasdaq2.csv')
+    save_csv_to_database(db, parsed_data)
 
     # # Display the inserted data
     # display_stocks(db)
@@ -256,4 +265,4 @@ if __name__ == '__main__':
     #     fetch_and_save_stock_data(db, symbol, period="1Y")
 
 
-    # db.close()
+    db.close()
