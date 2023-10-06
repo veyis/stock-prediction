@@ -117,9 +117,9 @@ if __name__ == '__main__':
         selected_stock_details = yf.Ticker(selected_symbol).info
 
         # Convert the dictionary to a DataFrame for better display in Streamlit
-        df_info = pd.DataFrame(list(selected_stock_details.items()))
+        df_info = pd.DataFrame(list(selected_stock_details.items()), columns=['Title', 'Value'])
 
-        
+        df_info['Value'] = df_info['Value'].astype(str)
 
         # Display the details in a table format
         st.table(df_info)
